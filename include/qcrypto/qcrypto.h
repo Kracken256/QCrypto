@@ -21,6 +21,7 @@ extern "C"
     typedef enum QC_ALGORITHMS
     {
         __QC_DIGEST__ = 1000,
+        QC_CRC8,
         QC_CRC32,
         QC_CRC64ISO,
     } QC_ALGORITHMS;
@@ -36,7 +37,7 @@ extern "C"
         void *ctx_ptr;
     } QC_MD_CTX;
 
-    #define QC_OK 1
+#define QC_OK 1
 
     /// @brief Create a new message digest context
     /// @param[in] ctx The context to create
