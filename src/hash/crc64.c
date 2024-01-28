@@ -77,7 +77,7 @@ static const uint64_t crc64_lookup_table[] = {
     0x9480000000000000ULL, 0x9530000000000000ULL, 0x97E0000000000000ULL, 0x9650000000000000ULL,
     0x9240000000000000ULL, 0x93F0000000000000ULL, 0x9120000000000000ULL, 0x9090000000000000ULL};
 
-QX_EXPORT void qx_crc64_goiso_update(qx_crc64_t *ctx, const uint8_t *data, size_t size)
+QC_EXPORT void qc_crc64_goiso_update(qc_crc64_t *ctx, const uint8_t *data, size_t size)
 {
     for (size_t i = 0; i < size; i++)
     {

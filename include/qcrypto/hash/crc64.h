@@ -13,6 +13,7 @@ extern "C"
 #endif
 
 #include "../types.h"
+#include "../macro.h"
 
     /*
         Algorithm: CRC64
@@ -22,17 +23,18 @@ extern "C"
         Implementation notes: This implementation uses a lookup table to speed up the algorithm.
     */
 
-    typedef struct qx_crc64_t
+    typedef struct qc_crc64_t
     {
         /// @brief Algorithm state
         uint64_t s;
-    } qx_crc64_t;
+    } qc_crc64_t;
 
     /// @brief Initialize a CRC64 context
     /// @param ctx The context to initialize
     /// @note ECMA-182 variant
-    static inline void qx_crc64_goiso_init(qx_crc64_t *ctx)
+    static inline void qc_crc64_goiso_init(qc_crc64_t *ctx, void *x)
     {
+        (void)x;
         ctx->s = 0xFFFFFFFFFFFFFFFF; // Initial value for CRC64 algorithm
     }
 
@@ -40,23 +42,35 @@ extern "C"
     /// @param ctx The context to update
     /// @param data The data to update the context with
     /// @param size The size of the data
-    void qx_crc64_goiso_update(qx_crc64_t *ctx, const uint8_t *data, size_t size);
+    void qc_crc64_goiso_update(qc_crc64_t *ctx, const uint8_t *data, size_t size);
 
     /// @brief Finalize a CRC64 context
     /// @param ctx The context to finalize
     /// @return The CRC64 hash
-    static inline uint64_t qx_crc64_goiso_final(qx_crc64_t *ctx)
+    static inline void qc_crc64_goiso_final(qc_crc64_t *ctx, uint8_t *out)
     {
         // A nice property of CRC64 is that the nil digest is always 0x0000000000000000
-        return ctx->s ^ 0xFFFFFFFFFFFFFFFF;
+        ctx->s = QC_BE64(ctx->s ^ 0xFFFFFFFFFFFFFFFF);
+
+        out[0] = (uint8_t)(ctx->s >> 56);
+        out[1] = (uint8_t)(ctx->s >> 48);
+        out[2] = (uint8_t)(ctx->s >> 40);
+        out[3] = (uint8_t)(ctx->s >> 32);
+        out[4] = (uint8_t)(ctx->s >> 24);
+        out[5] = (uint8_t)(ctx->s >> 16);
+        out[6] = (uint8_t)(ctx->s >> 8);
+        out[7] = (uint8_t)(ctx->s);
     }
 
-    static inline uint64_t qx_crc64_goiso(const uint8_t *data, size_t size)
+    static inline uint64_t qc_crc64_goiso(const uint8_t *data, size_t size)
     {
-        qx_crc64_t ctx;
-        qx_crc64_goiso_init(&ctx);
-        qx_crc64_goiso_update(&ctx, data, size);
-        return qx_crc64_goiso_final(&ctx);
+        qc_crc64_t ctx;
+        uint64_t out;
+        qc_crc64_goiso_init(&ctx, NULL);
+        qc_crc64_goiso_update(&ctx, data, size);
+        qc_crc64_goiso_final(&ctx, (uint8_t *)&out);
+
+        return out;
     }
 
 #ifdef __cplusplus

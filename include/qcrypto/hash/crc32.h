@@ -13,6 +13,7 @@ extern "C"
 #endif
 
 #include "../types.h"
+#include "../macro.h"
 
     /*
         Algorithm: CRC32
@@ -22,16 +23,17 @@ extern "C"
         Implementation notes: This implementation uses a lookup table to speed up the algorithm.
     */
 
-    typedef struct qx_crc32_t
+    typedef struct qc_crc32_t
     {
         /// @brief Algorithm state
         uint32_t s;
-    } qx_crc32_t;
+    } qc_crc32_t;
 
     /// @brief Initialize a CRC32 context
     /// @param ctx The context to initialize
-    static inline void qx_crc32_init(qx_crc32_t *ctx)
+    static inline void qc_crc32_init(qc_crc32_t *ctx, void *x)
     {
+        (void)x;
         ctx->s = 0xFFFFFFFF; // Initial value for CRC32 algorithm
     }
 
@@ -39,23 +41,31 @@ extern "C"
     /// @param ctx The context to update
     /// @param data The data to update the context with
     /// @param size The size of the data
-    void qx_crc32_update(qx_crc32_t *ctx, const uint8_t *data, size_t size);
+    void qc_crc32_update(qc_crc32_t *ctx, const uint8_t *data, size_t size);
 
     /// @brief Finalize a CRC32 context
     /// @param ctx The context to finalize
     /// @return The CRC32 hash
-    static inline uint32_t qx_crc32_final(qx_crc32_t *ctx)
+    static inline void qc_crc32_final(qc_crc32_t *ctx, uint8_t *out)
     {
         // A nice property of CRC32 is that the nil digest is always 0x00000000
-        return ctx->s ^ 0xFFFFFFFF;
+        ctx->s = QC_BE32(ctx->s ^ 0xFFFFFFFF);
+
+        out[0] = (uint8_t)(ctx->s >> 24);
+        out[1] = (uint8_t)(ctx->s >> 16);
+        out[2] = (uint8_t)(ctx->s >> 8);
+        out[3] = (uint8_t)(ctx->s);
     }
 
-    static inline uint32_t qx_crc32(const uint8_t *data, size_t size)
+    static inline uint32_t qc_crc32(const uint8_t *data, size_t size)
     {
-        qx_crc32_t ctx;
-        qx_crc32_init(&ctx);
-        qx_crc32_update(&ctx, data, size);
-        return qx_crc32_final(&ctx);
+        qc_crc32_t ctx;
+        uint32_t out;
+        qc_crc32_init(&ctx, NULL);
+        qc_crc32_update(&ctx, data, size);
+        qc_crc32_final(&ctx, (uint8_t *)&out);
+
+        return out;
     }
 
 #ifdef __cplusplus

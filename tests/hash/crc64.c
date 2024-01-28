@@ -2018,7 +2018,12 @@ int main()
 
     for (i = 0; i < sizeof(crc_test_vectors) / sizeof(crc_test_vectors[0]); i++)
     {
-        uint64_t crc = qx_crc64_goiso((uint8_t *)crc_test_vectors[i], sizeof(crc_test_vectors[0]));
+        uint64_t crc;
+        if (QC_Digest(QC_CRC64ISO, crc_test_vectors[i], sizeof(crc_test_vectors[0]), (uint8_t*)&crc) != QC_OK)
+        {
+            printf("digest failed\n");
+            return 1;
+        }
         if (crc != crc_test_crcs[i])
         {
             printf("crc mismatch: %016lx != %016lx, i=%d\n", crc, crc_test_crcs[i], i);
