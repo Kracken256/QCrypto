@@ -13,7 +13,6 @@ extern "C"
 #endif
 
 #include "types.h"
-#include "hash/all.h"
 
     typedef void (*QC_MD_INIT_FN_T)(void *, void *);
     typedef void (*QC_MD_UPDATE_FN_T)(void *, const uint8_t *, uint64_t);
