@@ -13,6 +13,7 @@ extern "C"
 #endif
 
 #include "crc32.h"
+#include "crc64.h"
 
 #ifdef __cplusplus
 }
