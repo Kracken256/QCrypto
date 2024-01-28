@@ -22,6 +22,7 @@ extern "C"
     {
         __QC_DIGEST__ = 1000,
         QC_CRC8,
+        QC_CRC16,
         QC_CRC32,
         QC_CRC64ISO,
     } QC_ALGORITHMS;

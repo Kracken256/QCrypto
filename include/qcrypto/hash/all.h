@@ -13,6 +13,7 @@ extern "C"
 #endif
 
 #include "crc8.h"
+#include "crc16.h"
 #include "crc32.h"
 #include "crc64.h"
 

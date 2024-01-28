@@ -15,6 +15,7 @@
 enum ALGO_TYPE_CTX_SIZE
 {
     QC_CRC8_CTX_SIZE = sizeof(qc_crc8_t),
+    QC_CRC16_CTX_SIZE = sizeof(qc_crc16_t),
     QC_CRC32_CTX_SIZE = sizeof(qc_crc32_t),
     QC_CRC64ISO_CTX_SIZE = sizeof(qc_crc64_t),
 };
@@ -54,6 +55,14 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         ctx->final = (QC_MD_FINAL_FN_T)qc_crc8_final;
         ctx->dsgt_size = 1;
         ctx->ctx_size = QC_CRC8_CTX_SIZE;
+        ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
+        break;
+    case QC_CRC16:
+        ctx->init = (QC_MD_INIT_FN_T)qc_crc16_init;
+        ctx->update = (QC_MD_UPDATE_FN_T)qc_crc16_update;
+        ctx->final = (QC_MD_FINAL_FN_T)qc_crc16_final;
+        ctx->dsgt_size = 2;
+        ctx->ctx_size = QC_CRC16_CTX_SIZE;
         ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
         break;
     case QC_CRC32:
