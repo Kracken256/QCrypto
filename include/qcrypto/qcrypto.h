@@ -17,10 +17,12 @@ extern "C"
     typedef void (*QC_MD_INIT_FN_T)(void *, void *);
     typedef void (*QC_MD_UPDATE_FN_T)(void *, const uint8_t *, uint64_t);
     typedef void (*QC_MD_FINAL_FN_T)(void *, uint8_t *);
+    typedef void (*QC_MD_RESET_FN_T)(void *, void *);
 
     typedef enum QC_ALGORITHMS
     {
         __QC_DIGEST__ = 1000,
+        QC_CRC,
         QC_CRC8,
         QC_CRC16,
         QC_CRC32,
@@ -32,6 +34,7 @@ extern "C"
         QC_MD_INIT_FN_T init;
         QC_MD_UPDATE_FN_T update;
         QC_MD_FINAL_FN_T final;
+        QC_MD_RESET_FN_T reset;
         QC_ALGORITHMS algo;
         uint64_t dsgt_size;
         uint16_t ctx_size;

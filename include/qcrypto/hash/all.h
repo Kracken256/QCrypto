@@ -16,6 +16,7 @@ extern "C"
 #include "crc16.h"
 #include "crc32.h"
 #include "crc64.h"
+#include "crc.h"
 
 #ifdef __cplusplus
 }

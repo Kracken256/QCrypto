@@ -14,6 +14,7 @@
 
 enum ALGO_TYPE_CTX_SIZE
 {
+    QC_CRC_CTX_SIZE = sizeof(qc_crc_t),
     QC_CRC8_CTX_SIZE = sizeof(qc_crc8_t),
     QC_CRC16_CTX_SIZE = sizeof(qc_crc16_t),
     QC_CRC32_CTX_SIZE = sizeof(qc_crc32_t),
@@ -31,28 +32,26 @@ static void *safe_malloc(size_t size)
     return ptr;
 }
 
-static int QC_vDigestReset(QC_MD_CTX *ctx, va_list args)
-{
-    if (ctx->init == NULL)
-    {
-        return -1;
-    }
-
-    ctx->init(ctx->ctx_ptr, args);
-
-    return 1;
-}
-
 static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
 {
     ctx->algo = algo;
 
     switch (algo)
     {
+    case QC_CRC:
+        ctx->init = (QC_MD_INIT_FN_T)qc_crc_init;
+        ctx->update = (QC_MD_UPDATE_FN_T)qc_crc_update;
+        ctx->final = (QC_MD_FINAL_FN_T)qc_crc_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_crc_reset;
+        ctx->dsgt_size = 8;
+        ctx->ctx_size = QC_CRC_CTX_SIZE;
+        ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
+        break;
     case QC_CRC8:
         ctx->init = (QC_MD_INIT_FN_T)qc_crc8_init;
         ctx->update = (QC_MD_UPDATE_FN_T)qc_crc8_update;
         ctx->final = (QC_MD_FINAL_FN_T)qc_crc8_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_crc8_init;
         ctx->dsgt_size = 1;
         ctx->ctx_size = QC_CRC8_CTX_SIZE;
         ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
@@ -61,6 +60,7 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         ctx->init = (QC_MD_INIT_FN_T)qc_crc16_init;
         ctx->update = (QC_MD_UPDATE_FN_T)qc_crc16_update;
         ctx->final = (QC_MD_FINAL_FN_T)qc_crc16_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_crc16_init;
         ctx->dsgt_size = 2;
         ctx->ctx_size = QC_CRC16_CTX_SIZE;
         ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
@@ -69,6 +69,7 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         ctx->init = (QC_MD_INIT_FN_T)qc_crc32_init;
         ctx->update = (QC_MD_UPDATE_FN_T)qc_crc32_update;
         ctx->final = (QC_MD_FINAL_FN_T)qc_crc32_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_crc32_init;
         ctx->dsgt_size = 4;
         ctx->ctx_size = QC_CRC32_CTX_SIZE;
         ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
@@ -77,6 +78,7 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         ctx->init = (QC_MD_INIT_FN_T)qc_crc64_goiso_init;
         ctx->update = (QC_MD_UPDATE_FN_T)qc_crc64_goiso_update;
         ctx->final = (QC_MD_FINAL_FN_T)qc_crc64_goiso_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_crc64_goiso_init;
         ctx->dsgt_size = 8;
         ctx->ctx_size = QC_CRC64ISO_CTX_SIZE;
         ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
@@ -85,6 +87,7 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         ctx->init = NULL;
         ctx->update = NULL;
         ctx->final = NULL;
+        ctx->reset = NULL;
         ctx->algo = algo;
         ctx->ctx_ptr = NULL;
         ctx->ctx_size = 0;
@@ -92,7 +95,9 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         return -1;
     }
 
-    return QC_vDigestReset(ctx, args);
+    ctx->init(ctx->ctx_ptr, args);
+
+    return 1;
 }
 
 QC_EXPORT int QC_DigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, ...)
@@ -140,11 +145,8 @@ QC_EXPORT int QC_DigestReset(QC_MD_CTX *ctx, ...)
     va_list args;
 
     va_start(args, ctx);
-    if (QC_vDigestReset(ctx, args) < 0)
-    {
-        va_end(args);
-        return -1;
-    }
+    
+    ctx->reset(ctx->ctx_ptr, args);
 
     va_end(args);
 
@@ -153,6 +155,9 @@ QC_EXPORT int QC_DigestReset(QC_MD_CTX *ctx, ...)
 
 QC_EXPORT void QC_DigestFree(QC_MD_CTX *ctx)
 {
+    if (!ctx)
+        return;
+
     if (ctx->ctx_ptr != NULL)
     {
         memset(ctx->ctx_ptr, 0, ctx->ctx_size);
@@ -160,6 +165,8 @@ QC_EXPORT void QC_DigestFree(QC_MD_CTX *ctx)
 
         ctx->ctx_ptr = NULL;
     }
+
+    memset(ctx, 0, sizeof(QC_MD_CTX)); // clear the context
 }
 
 QC_EXPORT int QC_Digest(QC_ALGORITHMS algo, const uint8_t *data, uint64_t size, uint8_t *out, ...)
