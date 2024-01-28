@@ -4,19 +4,18 @@
     License: Unlicense (Public Domain)
 */
 
-#ifndef __QCRYPTO_H__
-#define __QCRYPTO_H__
+#ifndef __QCRYPTO_HASH_ALL_H__
+#define __QCRYPTO_HASH_ALL_H__
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#include "types.h"
-#include "hash/all.h"
+#include "crc32.h"
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __QCRYPTO_H__
+#endif // __QCRYPTO_HASH_ALL_H__
