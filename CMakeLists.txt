@@ -10,6 +10,12 @@ add_library(qcrypto SHARED ${SOURCES})
 target_compile_options(qcrypto PRIVATE -O3 -fPIC -Wall -Wextra -pedantic -Werror -fvisibility=hidden -g)
 target_include_directories(qcrypto PUBLIC include)
 
+add_library(qcrypto-static STATIC ${SOURCES})
+target_compile_options(qcrypto-static PRIVATE -O3 -fPIC -Wall -Wextra -pedantic -Werror -fvisibility=hidden -g)
+target_include_directories(qcrypto-static PUBLIC include)
+
+set_target_properties(qcrypto-static PROPERTIES OUTPUT_NAME qcrypto)
+
 # Install the library
 install(TARGETS qcrypto
         LIBRARY DESTINATION /usr/lib
