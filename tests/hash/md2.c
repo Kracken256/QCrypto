@@ -2013,9 +2013,66 @@ static const uint8_t md2_test_md2s[][16] = {
     {0x1e, 0xe1, 0x9b, 0x52, 0x43, 0x10, 0x74, 0x6e, 0x8f, 0x0a, 0xe2, 0x57, 0x92, 0x4d, 0x12, 0x43, },
 };
 
+/*
+    Standard test vectors from RFC 1319:
+
+        MD2 ("") = 8350e5a3e24c153df2275c9f80692773
+        MD2 ("a") = 32ec01ec4a6dac72c0ab96fb34c0b5d1
+        MD2 ("abc") = da853b0d3f88d99b30283a69e6ded6bb
+        MD2 ("message digest") = ab4f496bfb2a530b219ff33031fe06b0
+        MD2 ("abcdefghijklmnopqrstuvwxyz") = 4e8ddff3650292ab5a4108c3aa47940b
+        MD2 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") =
+        da33def2a42df13975352846c30338cd
+        MD2 ("123456789012345678901234567890123456789012345678901234567890123456
+        78901234567890") = d5976f79d83d3a0dc9806c3c66f3efd8
+*/
+
+struct QC_MD2_TestVector
+{
+    const char* msg;
+    uint8_t md2[16];
+};
+
+static struct QC_MD2_TestVector vectors[] = {
+    {"", {0x83, 0x50, 0xe5, 0xa3, 0xe2, 0x4c, 0x15, 0x3d, 0xf2, 0x27, 0x5c, 0x9f, 0x80, 0x69, 0x27, 0x73}},
+    {"a", {0x32, 0xec, 0x01, 0xec, 0x4a, 0x6d, 0xac, 0x72, 0xc0, 0xab, 0x96, 0xfb, 0x34, 0xc0, 0xb5, 0xd1}},
+    {"abc", {0xda, 0x85, 0x3b, 0x0d, 0x3f, 0x88, 0xd9, 0x9b, 0x30, 0x28, 0x3a, 0x69, 0xe6, 0xde, 0xd6, 0xbb}},
+    {"message digest", {0xab, 0x4f, 0x49, 0x6b, 0xfb, 0x2a, 0x53, 0x0b, 0x21, 0x9f, 0xf3, 0x30, 0x31, 0xfe, 0x06, 0xb0}},
+    {"abcdefghijklmnopqrstuvwxyz", {0x4e, 0x8d, 0xdf, 0xf3, 0x65, 0x02, 0x92, 0xab, 0x5a, 0x41, 0x08, 0xc3, 0xaa, 0x47, 0x94, 0x0b}},
+    {"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", {0xda, 0x33, 0xde, 0xf2, 0xa4, 0x2d, 0xf1, 0x39, 0x75, 0x35, 0x28, 0x46, 0xc3, 0x03, 0x38, 0xcd}},
+    {"12345678901234567890123456789012345678901234567890123456789012345678901234567890", {0xd5, 0x97, 0x6f, 0x79, 0xd8, 0x3d, 0x3a, 0x0d, 0xc9, 0x80, 0x6c, 0x3c, 0x66, 0xf3, 0xef, 0xd8}},
+};
+
 int main()
 {
     int i, j;
+
+    for (i = 0; i < sizeof(vectors) / sizeof(vectors[0]); i++)
+    {
+        uint8_t md2[16];
+
+        if (QC_Digest(QC_MD2, (uint8_t*)vectors[i].msg, strlen(vectors[i].msg), (uint8_t*)&md2) != QC_OK)
+        {
+            printf("digest failed\n");
+            return 1;
+        }
+
+        if (memcmp(md2, vectors[i].md2, 16) != 0)
+        {
+            for (j = 0; j < 16; j++)
+            {
+                printf("%02x", md2[j]);
+            }
+            printf(" != ");
+            for (j = 0; j < 16; j++)
+            {
+                printf("%02x", vectors[i].md2[j]);
+            }
+
+            printf(" in test vector %d\n", i);
+            return 1;
+        }
+    }
 
     for (i = 0; i < sizeof(md2_test_vectors) / sizeof(md2_test_vectors[0]); i++)
     {
@@ -2044,6 +2101,6 @@ int main()
         }
     }
 
-    printf("all tests passed\n");
+    printf("RFC-1319 test vectors passed\n");
     return 0;
 }
