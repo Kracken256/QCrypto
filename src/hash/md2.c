@@ -63,7 +63,7 @@ void qc_md2_init(qc_md2_t *ctx, void *x)
     ctx->count = 0;
 }
 
-static void qc_md2_block(qc_md2_t *ctx, const uint8_t block[16])
+static inline void qc_md2_block(qc_md2_t *ctx, const uint8_t block[16])
 {
     uint8_t i, j, t;
 
