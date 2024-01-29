@@ -17,7 +17,9 @@ extern "C"
 
     /*
         Algorithm: MD2 message-digest algorithm
-        Description: The MD2 Message-Digest Algorithm is a cryptographic hash function developed by Ronald Rivest in 1989.[2] The algorithm is optimized for 8-bit computers. MD2 is specified in IETF RFC 1319.[3] The "MD" in MD2 stands for "Message Digest". - Wikipedia
+        Description: The MD2 Message-Digest Algorithm is a cryptographic hash function developed by 
+            Ronald Rivest in 1989.[2] The algorithm is optimized for 8-bit computers. MD2 is specified 
+            in IETF RFC 1319.[3] The "MD" in MD2 stands for "Message Digest". - Wikipedia
         Pros: Fast on 8-bit computers
         Cons: It was deemed to be insecure. It is no longer recommended for use.
     */
