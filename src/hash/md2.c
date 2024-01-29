@@ -2,6 +2,7 @@
     QCrypto - A simple cryptography library
     Author: Wesley C. Jones
     License: Unlicense (Public Domain)
+    From: https://www.rfc-editor.org/rfc/rfc1319.html
 */
 
 #include <qcrypto/hash/md2.h>
@@ -132,13 +133,12 @@ void qc_md2_update(qc_md2_t *ctx, const uint8_t *data, size_t size)
 
 void qc_md2_final(qc_md2_t *ctx, uint8_t *out)
 {
-    uint32_t index, padLen;
+    uint8_t index, plen;
 
-    /* Pad out to multiple of 16.
-     */
+    /* Apply padding */
     index = ctx->count;
-    padLen = 16 - index;
-    qc_md2_update(ctx, md2_padding[padLen], padLen);
+    plen = 16 - index;
+    qc_md2_update(ctx, md2_padding[plen], plen);
 
     /* Extend with checksum */
     qc_md2_update(ctx, ctx->checksum, 16);
