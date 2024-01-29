@@ -18,6 +18,8 @@ extern "C"
 #include "crc64.h"
 #include "crc.h"
 
+#include "md2.h"
+
 #ifdef __cplusplus
 }
 #endif

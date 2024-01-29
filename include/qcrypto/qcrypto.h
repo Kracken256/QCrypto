@@ -27,6 +27,8 @@ extern "C"
         QC_CRC16,
         QC_CRC32,
         QC_CRC64ISO,
+
+        QC_MD2,
     } QC_ALGORITHMS;
 
     typedef struct QC_MD_CTX
