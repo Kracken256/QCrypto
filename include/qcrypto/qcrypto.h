@@ -30,6 +30,7 @@ extern "C"
 
         QC_MD2,
         QC_MD4,
+        QC_MD5,
     } QC_ALGORITHMS;
 
     typedef struct QC_MD_CTX
