@@ -3,6 +3,7 @@
     Author: Wesley C. Jones
     License: Unlicense (Public Domain)
     From: https://www.rfc-editor.org/rfc/rfc1319.html
+    Legal: "Derived from the RSA Data Security, Inc. MD2 Message Digest Algorithm"
 */
 
 #include <qcrypto/hash/md2.h>

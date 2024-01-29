@@ -3,6 +3,7 @@
     Author: Wesley C. Jones
     License: Unlicense (Public Domain)
     From: https://www.rfc-editor.org/rfc/rfc1320.html
+    Legal: "Derived from the RSA Data Security, Inc. MD4 Message-Digest Algorithm"
 */
 
 #include <qcrypto/hash/md4.h>
