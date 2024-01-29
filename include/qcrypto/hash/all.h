@@ -19,6 +19,7 @@ extern "C"
 #include "crc.h"
 
 #include "md2.h"
+#include "md4.h"
 
 #ifdef __cplusplus
 }
