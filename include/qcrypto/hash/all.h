@@ -26,6 +26,9 @@ extern "C"
 #include "sha224.h"
 #include "sha256.h"
 
+// Expiremental
+#include "chacha20-roundrobin256.h"
+
 #ifdef __cplusplus
 }
 #endif

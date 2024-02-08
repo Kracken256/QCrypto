@@ -152,7 +152,7 @@ extern "C"
         QC_ARIA192,
         QC_ARIA256,
 
-        QC_CHACHA,
+        QC_CHACHA20,
         QC_SALSA,
         QC_RABBIT,
         QC_HC128,
@@ -160,6 +160,10 @@ extern "C"
         QC_ISAAC,
 
         QC_XOR,
+
+
+        // Experimental
+        QC_CHACHA20_ROUNDROBIN256,
     } QC_ALGORITHMS;
 
     typedef struct QC_MD_CTX
@@ -220,13 +224,14 @@ extern "C"
     int QC_Digest(QC_ALGORITHMS algo, const uint8_t *data, uint64_t size, uint8_t *out, ...);
 
     typedef int (*QC_CIPHER_INIT_FN_T)(void *, void *);
-    typedef int (*QC_CIPHER_SETUP_FN_T)(void *, void *, void *);
+    typedef int (*QC_CIPHER_SETUP_FN_T)(void *, const void *, const void *);
     typedef int (*QC_CIPHER_ENCRYPT_FN_T)(void *, const uint8_t *, uint64_t, uint8_t *, uint64_t *);
     typedef int (*QC_CIPHER_DECRYPT_FN_T)(void *, const uint8_t *, uint64_t, uint8_t *, uint64_t *);
     typedef int (*QC_CIPHER_RESET_FN_T)(void *, void *);
 
     typedef enum QC_CIPHER_MODE
     {
+        QC_NONE,
         QC_ECB,
         QC_CBC,
         QC_CFB,
@@ -251,8 +256,7 @@ extern "C"
         QC_CIPHER_MODE mode;
         uint32_t key_size;
         uint32_t iv_size;
-        uint32_t block_size;
-        uint64_t tag_size;
+        uint32_t block_size; // block size of 0, means stream cipher
         uint16_t ctx_size;
         void *ctx_ptr;
     } QC_CIPHER_CTX;
