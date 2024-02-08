@@ -22,15 +22,135 @@ extern "C"
     typedef enum QC_ALGORITHMS
     {
         __QC_DIGEST__ = 1000,
+
+        /* Cyclic Redundancy Check family */
         QC_CRC,
         QC_CRC8,
         QC_CRC16,
         QC_CRC32,
         QC_CRC64ISO,
 
+        /* Message Digest family */
         QC_MD2,
         QC_MD4,
         QC_MD5,
+        QC_MD6,
+
+        /* SHA */
+        QC_SHA0,
+        QC_SHA1,
+
+        /* SHA2 family */
+        QC_SHA224,
+        QC_SHA256,
+        QC_SHA384,
+        QC_SHA512,
+        QC_SHA512_224,
+        QC_SHA512_256,
+
+        /* SHA3 family */
+        QC_SHA3_224,
+        QC_SHA3_256,
+        QC_SHA3_384,
+        QC_SHA3_512,
+
+        /* BLAKE family */
+        QC_BLAKE256,
+        QC_BLAKE512,
+        QC_BLAKE2S,
+        QC_BLAKE2B,
+        QC_BLAKE2X,
+        QC_BLAKE3,
+
+        /* Whirlpool family */
+        QC_WHIRLPOOL,
+
+        /* Tiger family */
+        QC_TIGER,
+
+        /* RIPEMD family */
+        QC_RIPEMD128,
+        QC_RIPEMD160,
+        QC_RIPEMD256,
+        QC_RIPEMD320,
+
+        /* Keccak family */
+        QC_KECCAK224,
+        QC_KECCAK256,
+        QC_KECCAK384,
+        QC_KECCAK512,
+
+        /* Skein family */
+        QC_SKEIN,
+
+        /* Snefru family */
+        QC_SNEFRU128,
+        QC_SNEFRU256,
+
+        /* Spectral Hash family */
+        QC_SPECTRAL_HASH,
+
+        /* Streebog family */
+        QC_STREEBOG256,
+        QC_STREEBOG512,
+
+        /* SWIFFT family */
+        QC_SWIFFT,
+
+        /* SM3 family */
+        QC_SM3,
+
+        /* GOST family */
+        QC_GOST,
+
+        /* FSB family */
+        QC_FSB_160,
+        QC_FSB_512,
+
+        __QC_CIPHER__ = 2000,
+
+        /* AES family */
+        QC_AES128,
+        QC_AES192,
+        QC_AES256,
+        QC_AES384,
+        QC_AES512,
+
+        /* DES family */
+        QC_DES,
+        QC_3DES,
+
+        /* RC family */
+        QC_RC2,
+        QC_RC3,
+        QC_RC4,
+        QC_RC5,
+        QC_RC6,
+
+        /* FISH family */
+        QC_BLOWFISH,
+        QC_TWOFISH,
+        QC_THREEFISH,
+
+        /* CAST family */
+        QC_CAST128,
+        QC_CAST256,
+
+        /* IDEA family */
+        QC_IDEA,
+
+        /* SEED family */
+        QC_SEED,
+
+        /* CAMELLIA family */
+        QC_CAMELLIA128,
+        QC_CAMELLIA192,
+        QC_CAMELLIA256,
+
+        /* ARIA family */
+        QC_ARIA128,
+        QC_ARIA192,
+        QC_ARIA256,
     } QC_ALGORITHMS;
 
     typedef struct QC_MD_CTX

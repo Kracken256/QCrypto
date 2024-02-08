@@ -22,6 +22,8 @@ extern "C"
 #include "md4.h"
 #include "md5.h"
 
+#include "sha1.h"
+
 #ifdef __cplusplus
 }
 #endif

@@ -22,6 +22,7 @@ enum ALGO_TYPE_CTX_SIZE
     QC_MD2_CTX_SIZE = sizeof(qc_md2_t),
     QC_MD4_CTX_SIZE = sizeof(qc_md4_t),
     QC_MD5_CTX_SIZE = sizeof(qc_md5_t),
+    QC_SHA1_CTX_SIZE = sizeof(qc_sha1_t),
 };
 
 static void *safe_malloc(size_t size)
@@ -111,6 +112,15 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         ctx->reset = (QC_MD_RESET_FN_T)qc_md5_init;
         ctx->dsgt_size = 16;
         ctx->ctx_size = QC_MD5_CTX_SIZE;
+        ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
+        break;
+    case QC_SHA1:
+        ctx->init = (QC_MD_INIT_FN_T)qc_sha1_init;
+        ctx->update = (QC_MD_UPDATE_FN_T)qc_sha1_update;
+        ctx->final = (QC_MD_FINAL_FN_T)qc_sha1_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_sha1_init;
+        ctx->dsgt_size = 20;
+        ctx->ctx_size = QC_SHA1_CTX_SIZE;
         ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
         break;
     default:
