@@ -7,11 +7,11 @@ file(GLOB_RECURSE SOURCES "src/*.c")
 set(CMAKE_C_STANDARD 11)
 
 add_library(qcrypto SHARED ${SOURCES})
-target_compile_options(qcrypto PRIVATE -O3 -fPIC -Wall -Wextra -pedantic -fvisibility=hidden -g)
+target_compile_options(qcrypto PRIVATE -O3 -fPIC -Wall -Wextra -pedantic -fvisibility=hidden -g -flto)
 target_include_directories(qcrypto PUBLIC include)
 
 add_library(qcrypto-static STATIC ${SOURCES})
-target_compile_options(qcrypto-static PRIVATE -O3 -fPIC -Wall -Wextra -pedantic -fvisibility=hidden -g)
+target_compile_options(qcrypto-static PRIVATE -O3 -fPIC -Wall -Wextra -pedantic -fvisibility=hidden -g -flto)
 target_include_directories(qcrypto-static PUBLIC include)
 
 set_target_properties(qcrypto-static PROPERTIES OUTPUT_NAME qcrypto)
