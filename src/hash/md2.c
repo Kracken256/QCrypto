@@ -55,7 +55,7 @@ QC_EXPORT void qc_md2_init(qc_md2_t *ctx, void *x)
     (void)x;
 
     /* Initialize state to 0 */
-    memset(ctx->state, 0, 48);
+    memset(ctx->state, 0, 16);
 
     /* Initialize checksum to 0 */
     memset(ctx->checksum, 0, 16);
