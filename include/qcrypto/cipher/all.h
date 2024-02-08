@@ -12,6 +12,8 @@ extern "C"
 {
 #endif
 
+#include "stream/chacha20.h"
+
 #ifdef __cplusplus
 }
 #endif
