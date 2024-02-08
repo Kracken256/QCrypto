@@ -23,6 +23,8 @@ enum ALGO_TYPE_CTX_SIZE
     QC_MD4_CTX_SIZE = sizeof(qc_md4_t),
     QC_MD5_CTX_SIZE = sizeof(qc_md5_t),
     QC_SHA1_CTX_SIZE = sizeof(qc_sha1_t),
+    QC_SHA224_CTX_SIZE = sizeof(qc_sha224_t),
+    QC_SHA256_CTX_SIZE = sizeof(qc_sha256_t),
 };
 
 static void *safe_malloc(size_t size)
@@ -123,6 +125,25 @@ static int QC_vDigestInit(QC_MD_CTX *ctx, QC_ALGORITHMS algo, va_list args)
         ctx->ctx_size = QC_SHA1_CTX_SIZE;
         ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
         break;
+    case QC_SHA256:
+        ctx->init = (QC_MD_INIT_FN_T)qc_sha256_init;
+        ctx->update = (QC_MD_UPDATE_FN_T)qc_sha256_update;
+        ctx->final = (QC_MD_FINAL_FN_T)qc_sha256_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_sha256_init;
+        ctx->dsgt_size = 32;
+        ctx->ctx_size = QC_SHA256_CTX_SIZE;
+        ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
+        break;
+    case QC_SHA224:
+        ctx->init = (QC_MD_INIT_FN_T)qc_sha224_init;
+        ctx->update = (QC_MD_UPDATE_FN_T)qc_sha224_update;
+        ctx->final = (QC_MD_FINAL_FN_T)qc_sha224_final;
+        ctx->reset = (QC_MD_RESET_FN_T)qc_sha224_init;
+        ctx->dsgt_size = 28;
+        ctx->ctx_size = QC_SHA224_CTX_SIZE;
+        ctx->ctx_ptr = safe_malloc(ctx->ctx_size);
+        break;
+
     default:
         ctx->init = NULL;
         ctx->update = NULL;
@@ -185,7 +206,7 @@ QC_EXPORT int QC_DigestReset(QC_MD_CTX *ctx, ...)
     va_list args;
 
     va_start(args, ctx);
-    
+
     ctx->reset(ctx->ctx_ptr, args);
 
     va_end(args);

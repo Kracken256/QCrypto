@@ -24,12 +24,10 @@ extern "C"
 
     typedef struct qc_sha1_t
     {
-        uint32_t Intermediate_Hash[20 / 4];
-
-        uint32_t Length_Low;
-        uint32_t Length_High;
-        int16_t Message_Block_Index;
-        uint8_t Message_Block[64];
+        uint32_t state[5];
+        uint64_t length;
+        int16_t idx;
+        uint8_t block[64];
     } qc_sha1_t;
 
     /// @brief Initialize the SHA1 context

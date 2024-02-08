@@ -23,6 +23,8 @@ extern "C"
 #include "md5.h"
 
 #include "sha1.h"
+#include "sha224.h"
+#include "sha256.h"
 
 #ifdef __cplusplus
 }

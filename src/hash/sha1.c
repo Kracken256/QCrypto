@@ -15,25 +15,24 @@
 #define INIT_D 0x10325476
 #define INIT_E 0xC3D2E1F0
 
-#define ROTATE(bits,word) \
-                (((word) << (bits)) | ((word) >> (32-(bits))))
+#define ROTATE(bits, word) \
+    (((word) << (bits)) | ((word) >> (32 - (bits))))
 
 QC_EXPORT void qc_sha1_init(qc_sha1_t *ctx, void *x)
 {
     (void)x;
 
-    ctx->Length_Low = 0;
-    ctx->Length_High = 0;
-    ctx->Message_Block_Index = 0;
+    ctx->length = 0;
+    ctx->idx = 0;
 
-    ctx->Intermediate_Hash[0] = INIT_A;
-    ctx->Intermediate_Hash[1] = INIT_B;
-    ctx->Intermediate_Hash[2] = INIT_C;
-    ctx->Intermediate_Hash[3] = INIT_D;
-    ctx->Intermediate_Hash[4] = INIT_E;
+    ctx->state[0] = INIT_A;
+    ctx->state[1] = INIT_B;
+    ctx->state[2] = INIT_C;
+    ctx->state[3] = INIT_D;
+    ctx->state[4] = INIT_E;
 }
 
-void SHA1ProcessMessageBlock(qc_sha1_t *ctx)
+static inline void SHA1ProcessMessageBlock(qc_sha1_t *ctx)
 {
     const uint32_t K[] = {/* Constants defined in SHA-1   */
                           0x5A827999,
@@ -50,10 +49,10 @@ void SHA1ProcessMessageBlock(qc_sha1_t *ctx)
      */
     for (t = 0; t < 16; t++)
     {
-        W[t] = ctx->Message_Block[t * 4] << 24;
-        W[t] |= ctx->Message_Block[t * 4 + 1] << 16;
-        W[t] |= ctx->Message_Block[t * 4 + 2] << 8;
-        W[t] |= ctx->Message_Block[t * 4 + 3];
+        W[t] = ctx->block[t * 4] << 24;
+        W[t] |= ctx->block[t * 4 + 1] << 16;
+        W[t] |= ctx->block[t * 4 + 2] << 8;
+        W[t] |= ctx->block[t * 4 + 3];
     }
 
     for (t = 16; t < 80; t++)
@@ -61,11 +60,11 @@ void SHA1ProcessMessageBlock(qc_sha1_t *ctx)
         W[t] = ROTATE(1, W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16]);
     }
 
-    A = ctx->Intermediate_Hash[0];
-    B = ctx->Intermediate_Hash[1];
-    C = ctx->Intermediate_Hash[2];
-    D = ctx->Intermediate_Hash[3];
-    E = ctx->Intermediate_Hash[4];
+    A = ctx->state[0];
+    B = ctx->state[1];
+    C = ctx->state[2];
+    D = ctx->state[3];
+    E = ctx->state[4];
 
     for (t = 0; t < 20; t++)
     {
@@ -109,36 +108,32 @@ void SHA1ProcessMessageBlock(qc_sha1_t *ctx)
         A = temp;
     }
 
-    ctx->Intermediate_Hash[0] += A;
-    ctx->Intermediate_Hash[1] += B;
-    ctx->Intermediate_Hash[2] += C;
-    ctx->Intermediate_Hash[3] += D;
-    ctx->Intermediate_Hash[4] += E;
+    ctx->state[0] += A;
+    ctx->state[1] += B;
+    ctx->state[2] += C;
+    ctx->state[3] += D;
+    ctx->state[4] += E;
 
-    ctx->Message_Block_Index = 0;
+    ctx->idx = 0;
 }
 
 QC_EXPORT void qc_sha1_update(qc_sha1_t *ctx, const uint8_t *data, size_t size)
 {
     while (size--)
     {
-        ctx->Message_Block[ctx->Message_Block_Index++] =
+        ctx->block[ctx->idx++] =
             (*data & 0xFF);
 
-        ctx->Length_Low += 8;
-        if (ctx->Length_Low == 0)
-        {
-            ctx->Length_High++;
-        }
+        ctx->length += 8;
 
-        if (ctx->Message_Block_Index == 64)
+        if (ctx->idx == 64)
             SHA1ProcessMessageBlock(ctx);
 
         data++;
     }
 }
 
-void SHA1PadMessage(qc_sha1_t *ctx)
+static inline void SHA1PadMessage(qc_sha1_t *ctx)
 {
     /*
      *  Check to see if the current message block is too small to hold
@@ -146,41 +141,31 @@ void SHA1PadMessage(qc_sha1_t *ctx)
      *  block, process it, and then continue padding into a second
      *  block.
      */
-    if (ctx->Message_Block_Index > 55)
+    if (ctx->idx > 55)
     {
-        ctx->Message_Block[ctx->Message_Block_Index++] = 0x80;
-        while (ctx->Message_Block_Index < 64)
+        ctx->block[ctx->idx++] = 0x80;
+        while (ctx->idx < 64)
         {
-            ctx->Message_Block[ctx->Message_Block_Index++] = 0;
+            ctx->block[ctx->idx++] = 0;
         }
 
         SHA1ProcessMessageBlock(ctx);
 
-        while (ctx->Message_Block_Index < 56)
+        while (ctx->idx < 56)
         {
-            ctx->Message_Block[ctx->Message_Block_Index++] = 0;
+            ctx->block[ctx->idx++] = 0;
         }
     }
     else
     {
-        ctx->Message_Block[ctx->Message_Block_Index++] = 0x80;
-        while (ctx->Message_Block_Index < 56)
+        ctx->block[ctx->idx++] = 0x80;
+        while (ctx->idx < 56)
         {
-            ctx->Message_Block[ctx->Message_Block_Index++] = 0;
+            ctx->block[ctx->idx++] = 0;
         }
     }
 
-    /*
-     *  Store the message length as the last 8 octets
-     */
-    ctx->Message_Block[56] = ctx->Length_High >> 24;
-    ctx->Message_Block[57] = ctx->Length_High >> 16;
-    ctx->Message_Block[58] = ctx->Length_High >> 8;
-    ctx->Message_Block[59] = ctx->Length_High;
-    ctx->Message_Block[60] = ctx->Length_Low >> 24;
-    ctx->Message_Block[61] = ctx->Length_Low >> 16;
-    ctx->Message_Block[62] = ctx->Length_Low >> 8;
-    ctx->Message_Block[63] = ctx->Length_Low;
+    *(uint64_t *)&ctx->block[56] = QC_BE64(ctx->length);
 
     SHA1ProcessMessageBlock(ctx);
 }
@@ -191,9 +176,8 @@ QC_EXPORT void qc_sha1_final(qc_sha1_t *ctx, uint8_t *out)
 
     SHA1PadMessage(ctx);
 
-    ctx->Length_Low = 0;
-    ctx->Length_High = 0;
+    ctx->length = 0;
 
     for (i = 0; i < 20; ++i)
-        out[i] = ctx->Intermediate_Hash[i >> 2] >> 8 * (3 - (i & 0x03));
+        out[i] = ctx->state[i >> 2] >> 8 * (3 - (i & 0x03));
 }

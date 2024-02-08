@@ -151,6 +151,15 @@ extern "C"
         QC_ARIA128,
         QC_ARIA192,
         QC_ARIA256,
+
+        QC_CHACHA,
+        QC_SALSA,
+        QC_RABBIT,
+        QC_HC128,
+        QC_HC256,
+        QC_ISAAC,
+
+        QC_XOR,
     } QC_ALGORITHMS;
 
     typedef struct QC_MD_CTX
@@ -209,6 +218,131 @@ extern "C"
     /// @param ... Additional arguments
     /// @return returns 1 on success, negative on failure
     int QC_Digest(QC_ALGORITHMS algo, const uint8_t *data, uint64_t size, uint8_t *out, ...);
+
+    typedef int (*QC_CIPHER_INIT_FN_T)(void *, void *);
+    typedef int (*QC_CIPHER_SETUP_FN_T)(void *, void *, void *);
+    typedef int (*QC_CIPHER_ENCRYPT_FN_T)(void *, const uint8_t *, uint64_t, uint8_t *, uint64_t *);
+    typedef int (*QC_CIPHER_DECRYPT_FN_T)(void *, const uint8_t *, uint64_t, uint8_t *, uint64_t *);
+    typedef int (*QC_CIPHER_RESET_FN_T)(void *, void *);
+
+    typedef enum QC_CIPHER_MODE
+    {
+        QC_ECB,
+        QC_CBC,
+        QC_CFB,
+        QC_OFB,
+        QC_CTR,
+        QC_GCM,
+        QC_CCM,
+        QC_XTS,
+        QC_OCB,
+        QC_SIV,
+        QC_EAX,
+    } QC_CIPHER_MODE;
+
+    typedef struct QC_CIPHER_CTX
+    {
+        QC_CIPHER_INIT_FN_T init;
+        QC_CIPHER_SETUP_FN_T setup;
+        QC_CIPHER_ENCRYPT_FN_T encrypt;
+        QC_CIPHER_DECRYPT_FN_T decrypt;
+        QC_CIPHER_RESET_FN_T reset;
+        QC_ALGORITHMS algo;
+        QC_CIPHER_MODE mode;
+        uint32_t key_size;
+        uint32_t iv_size;
+        uint32_t block_size;
+        uint64_t tag_size;
+        uint16_t ctx_size;
+        void *ctx_ptr;
+    } QC_CIPHER_CTX;
+
+    /// @brief Create a new cipher context
+    /// @param[in] ctx The context to create
+    /// @param algo The algorithm to use
+    /// @param mode The mode to use
+    /// @param ... Additional arguments
+    /// @return returns 1 on success, negative on failure
+    /// @note The ctx pointer does not need to be initialized
+    /// @note The ctx pointer must be freed with QC_CipherFree to
+    /// free the internal context
+    int QC_CipherInit(QC_CIPHER_CTX *ctx, QC_ALGORITHMS algo, QC_CIPHER_MODE mode, ...);
+
+    /// @brief Setup a cipher context
+    /// @param ctx The cipher context
+    /// @param key The key to use
+    /// @param iv The initialization vector to use
+    /// @return returns 1 on success, negative on failure
+    int QC_CipherSetup(QC_CIPHER_CTX *ctx, const uint8_t *key, const uint8_t *iv);
+
+    /// @brief Create and setup a cipher context
+    /// @param ctx The cipher context
+    /// @param algo The algorithm to use
+    /// @param mode The mode to use
+    /// @param key The key to use
+    /// @param iv The initialization vector to use
+    /// @param ... Additional arguments
+    /// @return returns 1 on success, negative on failure
+    /// @note This is a convenience function that calls QC_CipherInit and QC_CipherSetup
+    /// @note The ctx pointer does not need to be initialized
+    /// @note The ctx pointer must be freed with QC_CipherFree to
+    /// free the internal context
+    int QC_CipherCreate(QC_CIPHER_CTX *ctx, QC_ALGORITHMS algo, QC_CIPHER_MODE mode, const uint8_t *key, const uint8_t *iv, ...);
+
+    /// @brief Encrypt data
+    /// @param ctx The cipher context
+    /// @param plaintext The plaintext to encrypt
+    /// @param plaintext_size The size of the plaintext
+    /// @param ciphertext The output buffer
+    /// @param ciphertext_size The size of the ciphertext
+    /// @return returns 1 on success, negative on failure
+    int QC_CipherEncrypt(QC_CIPHER_CTX *ctx, const uint8_t *plaintext, uint64_t plaintext_size, uint8_t *ciphertext, uint64_t *ciphertext_size);
+
+    /// @brief Decrypt data
+    /// @param ctx The cipher context
+    /// @param ciphertext The ciphertext to decrypt
+    /// @param ciphertext_size The size of the ciphertext
+    /// @param plaintext The output buffer
+    /// @param plaintext_size The size of the plaintext
+    /// @return returns 1 on success, negative on failure
+    int QC_CipherDecrypt(QC_CIPHER_CTX *ctx, const uint8_t *ciphertext, uint64_t ciphertext_size, uint8_t *plaintext, uint64_t *plaintext_size);
+
+    /// @brief Reset a cipher context
+    /// @param ctx The cipher context
+    /// @param ... Additional arguments
+    /// @return returns 1 on success, negative on failure
+    /// @note This will avoid allocating a new context
+    int QC_CipherReset(QC_CIPHER_CTX *ctx, ...);
+
+    /// @brief Free a cipher context
+    /// @param ctx The cipher context
+    void QC_CipherFree(QC_CIPHER_CTX *ctx);
+
+    /// @brief Do encryption all in one
+    /// @param algo The algorithm to use
+    /// @param mode The mode to use
+    /// @param key The key to use
+    /// @param iv The initialization vector to use
+    /// @param plaintext The plaintext to encrypt
+    /// @param plaintext_size The size of the plaintext
+    /// @param ciphertext The output buffer
+    /// @param ciphertext_size The size of the ciphertext
+    /// @param ... Additional arguments
+    /// @return returns 1 on success, negative on failure
+    int QC_Encrypt(QC_ALGORITHMS algo, QC_CIPHER_MODE mode, const uint8_t *key, const uint8_t *iv, const uint8_t *plaintext, uint64_t plaintext_size, uint8_t *ciphertext, uint64_t *ciphertext_size, ...);
+
+    /// @brief Do decryption all in one
+    /// @param algo The algorithm to use
+    /// @param mode The mode to use
+    /// @param key The key to use
+    /// @param iv The initialization vector to use
+    /// @param ciphertext The ciphertext to decrypt
+    /// @param ciphertext_size The size of the ciphertext
+    /// @param plaintext The output buffer
+    /// @param plaintext_size The size of the plaintext
+    /// @param ... Additional arguments
+    /// @return returns 1 on success, negative on failure
+    int QC_Decrypt(QC_ALGORITHMS algo, QC_CIPHER_MODE mode, const uint8_t *key, const uint8_t *iv, const uint8_t *ciphertext, uint64_t ciphertext_size, uint8_t *plaintext, uint64_t *plaintext_size, ...);
 
 #ifdef __cplusplus
 }
