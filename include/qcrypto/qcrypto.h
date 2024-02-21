@@ -161,9 +161,12 @@ extern "C"
 
         QC_XOR,
 
-
         // Experimental
         QC_CHACHA20_ROUNDROBIN256,
+
+        __QC_RAND__ = 3000,
+
+        QC_XOR128,
     } QC_ALGORITHMS;
 
     typedef struct QC_MD_CTX
@@ -347,6 +350,71 @@ extern "C"
     /// @param ... Additional arguments
     /// @return returns 1 on success, negative on failure
     int QC_Decrypt(QC_ALGORITHMS algo, QC_CIPHER_MODE mode, const uint8_t *key, const uint8_t *iv, const uint8_t *ciphertext, uint64_t ciphertext_size, uint8_t *plaintext, uint64_t *plaintext_size, ...);
+
+    struct QC_RAND_PERIOD
+    {
+        // Form of mantissa * 2^b2_exp
+        uint32_t mantissa;
+        uint32_t b2_exp;
+    };
+
+    typedef void (*QC_RAND_INIT_FN_T)(void *, const uint8_t *, size_t);
+    typedef void (*QC_RAND_RESET_FN_T)(void *);
+    typedef uint32_t (*QC_RAND_NEXT32_FN_T)(void *);
+
+    typedef struct QC_RAND_CTX
+    {
+        QC_RAND_INIT_FN_T init;
+        QC_RAND_RESET_FN_T reset;
+        QC_RAND_NEXT32_FN_T next32;
+        QC_ALGORITHMS algo;
+        struct QC_RAND_PERIOD period;
+        uint16_t ctx_size;
+        void *ctx_ptr;
+    } QC_RAND_CTX;
+
+    /// @brief Create a new random number generator context
+    /// @param[in] ctx The context to create
+    /// @param algo The algorithm to use
+    /// @param ... Additional arguments
+    /// @return returns 1 on success, negative on failure
+    /// @note The ctx pointer does not need to be initialized
+    /// @note The ctx pointer must be freed with QC_RandFree to
+    /// free the internal context
+    int QC_RandInit(QC_RAND_CTX *ctx, QC_ALGORITHMS algo);
+
+    /// @brief Seed a random number generator
+    /// @param ctx The random number generator context
+    /// @param seed The seed to use
+    /// @param size The size of the seed
+    /// @return returns 1 on success, negative on failure
+    int QC_RandSeed(QC_RAND_CTX *ctx, const uint8_t *seed, uint64_t size);
+
+    /// @brief Reset a random number generator
+    /// @param ctx The random number generator context
+    /// @return returns 1 on success, negative on failure
+    int QC_RandReset(QC_RAND_CTX *ctx);
+
+    /// @brief Fill a buffer with pseudo-random data
+    /// @param ctx The random number generator context
+    /// @param buf The buffer to fill
+    /// @param size The size of the buffer
+    /// @return returns 1 on success, negative on failure
+    int QC_RandFill(QC_RAND_CTX *ctx, uint8_t *buf, uint64_t size);
+
+    /// @brief Free a random number generator context
+    /// @param ctx The random number generator context
+    void QC_RandFree(QC_RAND_CTX *ctx);
+
+    /// @brief Fill a buffer with pseudo-random data
+    /// @param algo The algorithm to use
+    /// @param buf The buffer to fill
+    /// @param size The size of the buffer
+    /// @param seed The seed to use
+    /// @param seed_size The size of the seed
+    /// @return returns 1 on success, negative on failure
+    /// @note This is a convenience function that calls QC_RandInit, QC_RandSeed, and QC_RandFill
+    int QC_Rand(QC_ALGORITHMS algo, uint8_t *buf, uint64_t size, const uint8_t *seed, uint64_t seed_size);
 
 #ifdef __cplusplus
 }
