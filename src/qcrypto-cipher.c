@@ -26,6 +26,7 @@ static void *safe_malloc(size_t size)
         perror("QCRYPTO: malloc failed");
         exit(1);
     }
+    memset(ptr, 0, size);
     return ptr;
 }
 
