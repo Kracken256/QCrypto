@@ -55,19 +55,11 @@ int printf(const char *format, ...);
 
 static inline void qc_chacha20_roundrobin256_transform(qc_chacha20_roundrobin256_t *ctx)
 {
-    uint8_t *ptr = ctx->block;
-
     qc_chacha20_crypt(&ctx->inner, ctx->block, sizeof(ctx->block), ctx->block, &out_size);
 
-    // XOR first 44 bytes of block into state
+    // XOR block into state
     for (size_t i = 0; i < sizeof(ctx->state); i++)
-        ctx->state.state[i] ^= ptr[i];
-
-    ptr += 44;
-
-    // XOR last 20 bytes of block into state
-    for (size_t i = 0; i < 20; i++)
-        ctx->state.state[i] ^= ptr[i];
+        ctx->state.state[i] ^= ctx->block[i];
 }
 
 QC_EXPORT void qc_chacha20_roundrobin256_update(qc_chacha20_roundrobin256_t *ctx, const uint8_t *data, size_t size)
@@ -95,6 +87,10 @@ QC_EXPORT void qc_chacha20_roundrobin256_final(qc_chacha20_roundrobin256_t *ctx,
     ctx->block[ctx->index] = 0x80;
     memset(ctx->block + ctx->index + 1, ctx->index, sizeof(ctx->block) - ctx->index - 1);
     qc_chacha20_roundrobin256_transform(ctx);
+
+    // XOR last 20 bytes of state into first 20 bytes of state
+    for (size_t i = 0; i < 20; i++)
+        ctx->state.state[i] ^= ctx->state.state[i + 44];
 
     /* The digest is the first 256 bits of the ChaCha20 keystream when inititialized with the state. */
     memset(out, 0, ctx->dgst_size);
