@@ -26,7 +26,7 @@ extern "C"
         qc_chacha20_t inner;
         union
         {
-            uint8_t state[44];
+            uint8_t state[64];
             struct
             {
                 uint8_t key[32];
