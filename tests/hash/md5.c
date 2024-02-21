@@ -2044,7 +2044,7 @@ static struct QC_MD5_TestVector vectors[] = {
 
 int main()
 {
-    int i, j;
+    size_t i, j;
 
     for (i = 0; i < sizeof(vectors) / sizeof(vectors[0]); i++)
     {
@@ -2068,7 +2068,7 @@ int main()
                 printf("%02x", vectors[i].md5[j]);
             }
 
-            printf(" in test vector %d\n", i);
+            printf(" in test vector %zu\n", i);
             return 1;
         }
     }
@@ -2095,7 +2095,7 @@ int main()
                 printf("%02x", md5_test_md5s[i][j]);
             }
 
-            printf(" in test vector %d\n", i);
+            printf(" in test vector %zu\n", i);
             return 1;
         }
     }

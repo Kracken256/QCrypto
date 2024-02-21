@@ -2035,7 +2035,7 @@ static struct QC_SHA1_TestVector vectors[] = {
 
 int main()
 {
-    int i, j;
+    size_t i, j;
 
     for (i = 0; i < sizeof(vectors) / sizeof(vectors[0]); i++)
     {
@@ -2059,7 +2059,7 @@ int main()
                 printf("%02x", vectors[i].sha1[j]);
             }
 
-            printf(" in test vector %d\n", i);
+            printf(" in test vector %zu\n", i);
             return 1;
         }
     }
@@ -2086,7 +2086,7 @@ int main()
                 printf("%02x", sha1_test_sha1s[i][j]);
             }
 
-            printf(" in test vector %d\n", i);
+            printf(" in test vector %zu\n", i);
             return 1;
         }
     }

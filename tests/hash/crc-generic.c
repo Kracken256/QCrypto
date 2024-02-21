@@ -11,7 +11,7 @@ int main()
 {
     uint64_t digest;
 
-    if (QC_Digest(QC_CRC, "hello world", 11, (uint8_t *)&digest, 64, 0x0b8832cbf5b3c646, 0x0a532b523827d0e7ULL, 0xa5fe29cae22e6563ULL) != QC_OK)
+    if (QC_Digest(QC_CRC, (const uint8_t*)"hello world", 11, (uint8_t *)&digest, 64, 0x0b8832cbf5b3c646, 0x0a532b523827d0e7ULL, 0xa5fe29cae22e6563ULL) != QC_OK)
     {
         printf("CRC init failed\n");
         return 1;

@@ -2045,7 +2045,7 @@ static struct QC_MD2_TestVector vectors[] = {
 
 int main()
 {
-    int i, j;
+    size_t i, j;
 
     for (i = 0; i < sizeof(vectors) / sizeof(vectors[0]); i++)
     {
@@ -2069,7 +2069,7 @@ int main()
                 printf("%02x", vectors[i].md2[j]);
             }
 
-            printf(" in test vector %d\n", i);
+            printf(" in test vector %zu\n", i);
             return 1;
         }
     }
@@ -2096,7 +2096,7 @@ int main()
                 printf("%02x", md2_test_md2s[i][j]);
             }
 
-            printf(" in test vector %d\n", i);
+            printf(" in test vector %zu\n", i);
             return 1;
         }
     }

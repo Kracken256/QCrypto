@@ -5874,7 +5874,7 @@ int main()
         0x6c, 0x07, 0xb5, 0xed,
         0xc9, 0x06, 0xeb, 0xed};
 
-    if (QC_Encrypt(QC_CHACHA20, QC_NONE, key, iv, plaintext, sizeof(plaintext) - 1, ciphertext, NULL, 0ULL) != 1)
+    if (QC_Encrypt(QC_CHACHA20, QC_NONE, key, iv, (const uint8_t*)plaintext, sizeof(plaintext) - 1, ciphertext, NULL, 0ULL) != 1)
     {
         printf("Encryption failed\n");
         return 1;

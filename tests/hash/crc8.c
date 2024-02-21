@@ -2014,7 +2014,7 @@ static const uint8_t crc_test_crcs[] = {
 
 int main()
 {
-    int i;
+    size_t i;
 
     for (i = 0; i < sizeof(crc_test_vectors) / sizeof(crc_test_vectors[0]); i++)
     {
@@ -2027,7 +2027,7 @@ int main()
 
         if (crc != crc_test_crcs[i])
         {
-            printf("crc mismatch: %08x != %08x, i=%d\n", crc, crc_test_crcs[i], i);
+            printf("crc mismatch: %08x != %08x, i=%zu\n", crc, crc_test_crcs[i], i);
             return 1;
         }
     }

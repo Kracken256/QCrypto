@@ -20,11 +20,11 @@ static int hashfile(const char *file)
     }
 
     QC_MD_CTX ctx;
-    unsigned char hash[32];
+    uint8_t hash[32];
 
     QC_DigestInit(&ctx, QC_CHACHA20_ROUNDROBIN256);
 
-    char buf[1024];
+    uint8_t buf[1024];
     size_t len;
 
     while ((len = fread(buf, 1, sizeof(buf), f)) > 0)
@@ -46,11 +46,11 @@ static int hashfile(const char *file)
 static int hashstdin()
 {
     QC_MD_CTX ctx;
-    unsigned char hash[32];
+    uint8_t hash[32];
 
     QC_DigestInit(&ctx, QC_CHACHA20_ROUNDROBIN256);
 
-    char buf[1024];
+    uint8_t buf[1024];
     size_t len;
 
     while ((len = fread(buf, 1, sizeof(buf), stdin)) > 0)
