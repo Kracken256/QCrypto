@@ -17,7 +17,7 @@ QC_EXPORT void qc_xor128_seed(qc_xor128_t *lsfr, const uint8_t *seed, size_t n)
 
     if (n < 16)
     {
-        memset(lsfr->state + n, 0, 16 - n);
+        memset(lsfr->state + n, 0x80, 16 - n);
     }
 
     lsfr->state[0]++; // state[0] != state[1]
