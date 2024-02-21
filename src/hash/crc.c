@@ -66,7 +66,7 @@ static inline uint64_t qc_reflect(uint64_t x, uint8_t bits)
     return y;
 }
 
-QC_EXPORT void qc_crc_init(qc_crc_t *ctx, void *x)
+void qc_crc_init(qc_crc_t *ctx, void *x)
 {
     va_list args;
     uint64_t poly, init, xor_out;
@@ -95,7 +95,7 @@ QC_EXPORT void qc_crc_init(qc_crc_t *ctx, void *x)
     qc_crc_generate_table(ctx);
 }
 
-QC_EXPORT void qc_crc_update(qc_crc_t *ctx, const uint8_t *data, size_t size)
+void qc_crc_update(qc_crc_t *ctx, const uint8_t *data, size_t size)
 {
     if (ctx->table == NULL)
         return; // invalid context

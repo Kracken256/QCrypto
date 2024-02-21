@@ -66,7 +66,7 @@ static void chacha20_block_next(struct qc_chacha20_t *ctx)
     }
 }
 
-QC_EXPORT int qc_chacha20_init(qc_chacha20_t *ctx, void *x)
+int qc_chacha20_init(qc_chacha20_t *ctx, void *x)
 {
     va_list args;
     memcpy(args, x, sizeof(va_list));
@@ -77,7 +77,7 @@ QC_EXPORT int qc_chacha20_init(qc_chacha20_t *ctx, void *x)
     return 1;
 }
 
-QC_EXPORT int qc_chacha20_setup(qc_chacha20_t *ctx, const uint8_t *key, const uint8_t *nonce)
+int qc_chacha20_setup(qc_chacha20_t *ctx, const uint8_t *key, const uint8_t *nonce)
 {
     memcpy(ctx->key, key, sizeof(ctx->key));
     memcpy(ctx->nonce, nonce, sizeof(ctx->nonce));
@@ -111,7 +111,7 @@ QC_EXPORT int qc_chacha20_setup(qc_chacha20_t *ctx, const uint8_t *key, const ui
     return 1;
 }
 
-QC_EXPORT int qc_chacha20_crypt(qc_chacha20_t *ctx, const uint8_t *in, uint64_t in_size, uint8_t *out, uint64_t *out_size)
+int qc_chacha20_crypt(qc_chacha20_t *ctx, const uint8_t *in, uint64_t in_size, uint8_t *out, uint64_t *out_size)
 {
     uint8_t *keystream8 = (uint8_t *)ctx->keystream32;
 

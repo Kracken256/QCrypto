@@ -38,7 +38,7 @@ static void wrapper(qc_chacha20_t *ctx, ...)
 // not needed
 static uint64_t out_size = 0;
 
-QC_EXPORT void qc_chacha20_roundrobin256_init(qc_chacha20_roundrobin256_t *ctx, void *x)
+void qc_chacha20_roundrobin256_init(qc_chacha20_roundrobin256_t *ctx, void *x)
 {
     (void)x;
 
@@ -62,7 +62,7 @@ static inline void qc_chacha20_roundrobin256_transform(qc_chacha20_roundrobin256
         ctx->state.state[i] ^= ctx->block[i];
 }
 
-QC_EXPORT void qc_chacha20_roundrobin256_update(qc_chacha20_roundrobin256_t *ctx, const uint8_t *data, size_t size)
+void qc_chacha20_roundrobin256_update(qc_chacha20_roundrobin256_t *ctx, const uint8_t *data, size_t size)
 {
     while (size--)
     {
@@ -79,7 +79,7 @@ QC_EXPORT void qc_chacha20_roundrobin256_update(qc_chacha20_roundrobin256_t *ctx
     }
 }
 
-QC_EXPORT void qc_chacha20_roundrobin256_final(qc_chacha20_roundrobin256_t *ctx, uint8_t *out)
+void qc_chacha20_roundrobin256_final(qc_chacha20_roundrobin256_t *ctx, uint8_t *out)
 {
     ctx->length += ctx->index;
 

@@ -35,7 +35,7 @@ static uint32_t SHA224_H0[8] = {
     0xFFC00B31, 0x68581511, 0x64F98FA7, 0xBEFA4FA4
 };
 
-QC_EXPORT void qc_sha224_init(qc_sha224_t *ctx, void *x)
+void qc_sha224_init(qc_sha224_t *ctx, void *x)
 {
     (void)x;
 
@@ -119,7 +119,7 @@ static inline void qc_sha224_transform(qc_sha224_t *ctx)
     ctx->index = 0;
 }
 
-QC_EXPORT void qc_sha224_update(qc_sha224_t *ctx, const uint8_t *data, size_t size)
+void qc_sha224_update(qc_sha224_t *ctx, const uint8_t *data, size_t size)
 {
     while (size--)
     {
@@ -137,7 +137,7 @@ QC_EXPORT void qc_sha224_update(qc_sha224_t *ctx, const uint8_t *data, size_t si
     }
 }
 
-QC_EXPORT void qc_sha224_final(qc_sha224_t *ctx, uint8_t *out)
+void qc_sha224_final(qc_sha224_t *ctx, uint8_t *out)
 {
     int i;
 

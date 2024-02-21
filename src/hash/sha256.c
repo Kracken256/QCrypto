@@ -34,7 +34,7 @@ static uint32_t SHA256_H0[8] = {
     0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,
     0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19};
 
-QC_EXPORT void qc_sha256_init(qc_sha256_t *ctx, void *x)
+void qc_sha256_init(qc_sha256_t *ctx, void *x)
 {
     (void)x;
 
@@ -118,7 +118,7 @@ static inline void qc_sha256_transform(qc_sha256_t *ctx)
     ctx->index = 0;
 }
 
-QC_EXPORT void qc_sha256_update(qc_sha256_t *ctx, const uint8_t *data, size_t size)
+void qc_sha256_update(qc_sha256_t *ctx, const uint8_t *data, size_t size)
 {
     while (size--)
     {
@@ -136,7 +136,7 @@ QC_EXPORT void qc_sha256_update(qc_sha256_t *ctx, const uint8_t *data, size_t si
     }
 }
 
-QC_EXPORT void qc_sha256_final(qc_sha256_t *ctx, uint8_t *out)
+void qc_sha256_final(qc_sha256_t *ctx, uint8_t *out)
 {
     int i;
 

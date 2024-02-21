@@ -18,7 +18,7 @@
 #define ROTATE(bits, word) \
     (((word) << (bits)) | ((word) >> (32 - (bits))))
 
-QC_EXPORT void qc_sha1_init(qc_sha1_t *ctx, void *x)
+void qc_sha1_init(qc_sha1_t *ctx, void *x)
 {
     (void)x;
 
@@ -117,7 +117,7 @@ static inline void SHA1ProcessMessageBlock(qc_sha1_t *ctx)
     ctx->idx = 0;
 }
 
-QC_EXPORT void qc_sha1_update(qc_sha1_t *ctx, const uint8_t *data, size_t size)
+void qc_sha1_update(qc_sha1_t *ctx, const uint8_t *data, size_t size)
 {
     while (size--)
     {
@@ -170,7 +170,7 @@ static inline void SHA1PadMessage(qc_sha1_t *ctx)
     SHA1ProcessMessageBlock(ctx);
 }
 
-QC_EXPORT void qc_sha1_final(qc_sha1_t *ctx, uint8_t *out)
+void qc_sha1_final(qc_sha1_t *ctx, uint8_t *out)
 {
     int i;
 

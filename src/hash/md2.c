@@ -50,7 +50,7 @@ static uint8_t *md2_padding[] = {
     (uint8_t *)"\017\017\017\017\017\017\017\017\017\017\017\017\017\017\017",
     (uint8_t *)"\020\020\020\020\020\020\020\020\020\020\020\020\020\020\020\020"};
 
-QC_EXPORT void qc_md2_init(qc_md2_t *ctx, void *x)
+void qc_md2_init(qc_md2_t *ctx, void *x)
 {
     (void)x;
 
@@ -100,7 +100,7 @@ static inline void qc_md2_block(qc_md2_t *ctx, const uint8_t block[16])
     }
 }
 
-QC_EXPORT void qc_md2_update(qc_md2_t *ctx, const uint8_t *data, size_t size)
+void qc_md2_update(qc_md2_t *ctx, const uint8_t *data, size_t size)
 {
     uint8_t i, j, index, n;
 
@@ -132,7 +132,7 @@ QC_EXPORT void qc_md2_update(qc_md2_t *ctx, const uint8_t *data, size_t size)
         ctx->buffer[index + j] = data[i + j];
 }
 
-QC_EXPORT void qc_md2_final(qc_md2_t *ctx, uint8_t *out)
+void qc_md2_final(qc_md2_t *ctx, uint8_t *out)
 {
     uint8_t index, plen;
 

@@ -62,7 +62,7 @@ static uint8_t md5_padding[64] = {
         (a) = ROTATE_LEFT((a), (s));                          \
     }
 
-QC_EXPORT void qc_md4_init(qc_md4_t *ctx, void *x)
+void qc_md4_init(qc_md4_t *ctx, void *x)
 {
     (void)x;
 
@@ -152,7 +152,7 @@ static inline void qc_md4_block(qc_md4_t *ctx, const uint8_t block[16])
     ctx->state[3] += d;
 }
 
-QC_EXPORT void qc_md4_update(qc_md4_t *ctx, const uint8_t *data, size_t size)
+void qc_md4_update(qc_md4_t *ctx, const uint8_t *data, size_t size)
 {
     uint8_t i, j, index, n;
 
@@ -187,7 +187,7 @@ QC_EXPORT void qc_md4_update(qc_md4_t *ctx, const uint8_t *data, size_t size)
         ctx->buffer[index + j] = data[i + j];
 }
 
-QC_EXPORT void qc_md4_final(qc_md4_t *ctx, uint8_t *out)
+void qc_md4_final(qc_md4_t *ctx, uint8_t *out)
 {
     uint8_t bits[8], index, plen;
 

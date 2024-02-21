@@ -76,7 +76,7 @@ Rotation is separate from addition to prevent recomputation.
         (a) += (b);                                     \
     }
 
-QC_EXPORT void qc_md5_init(qc_md5_t *ctx, void *x)
+void qc_md5_init(qc_md5_t *ctx, void *x)
 {
     (void)x;
 
@@ -184,7 +184,7 @@ static inline void qc_md5_block(qc_md5_t *ctx, const uint8_t block[16])
     ctx->state[3] += d;
 }
 
-QC_EXPORT void qc_md5_update(qc_md5_t *ctx, const uint8_t *data, size_t size)
+void qc_md5_update(qc_md5_t *ctx, const uint8_t *data, size_t size)
 {
     uint8_t i, j, index, n;
 
@@ -219,7 +219,7 @@ QC_EXPORT void qc_md5_update(qc_md5_t *ctx, const uint8_t *data, size_t size)
         ctx->buffer[index + j] = data[i + j];
 }
 
-QC_EXPORT void qc_md5_final(qc_md5_t *ctx, uint8_t *out)
+void qc_md5_final(qc_md5_t *ctx, uint8_t *out)
 {
     uint8_t bits[8], index, plen;
 

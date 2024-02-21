@@ -45,7 +45,7 @@ static const uint16_t crc16_lookup_table[256] = {
     0x4400, 0x84C1, 0x8581, 0x4540, 0x8701, 0x47C0, 0x4680, 0x8641,
     0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040};
 
-QC_EXPORT void qc_crc16_update(qc_crc16_t *ctx, const uint8_t *data, size_t size)
+void qc_crc16_update(qc_crc16_t *ctx, const uint8_t *data, size_t size)
 {
     for (size_t i = 0; i < size; i++)
     {

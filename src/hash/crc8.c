@@ -45,7 +45,7 @@ static const uint8_t crc8_lookup_table[256] = {
     0xDE, 0xD9, 0xD0, 0xD7, 0xC2, 0xC5, 0xCC, 0xCB,
     0xE6, 0xE1, 0xE8, 0xEF, 0xFA, 0xFD, 0xF4, 0xF3};
 
-QC_EXPORT void qc_crc8_update(qc_crc8_t *ctx, const uint8_t *data, size_t size)
+void qc_crc8_update(qc_crc8_t *ctx, const uint8_t *data, size_t size)
 {
     for (size_t i = 0; i < size; i++)
     {
